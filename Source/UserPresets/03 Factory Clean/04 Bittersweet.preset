@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<AltarState>
+  <DspChain>
+    <Slot type="Overdrive" bypassed="1">
+      <Overdrive mode="0.0" mix="1.0" drive="0.1000000014901161" bits="8.0" foldAmount="1.0"
+                 tone="0.0" srReduction="16.0" circuitBend="0.0" circuitBendFreq="400.0"
+                 circuitBendTrigger="0.0" outputGain="0.0"/>
+    </Slot>
+    <Slot type="Amp" bypassed="0">
+      <Amp mode="0.0" inputGain="25.59999847412109" low="0.0" mid="0.0"
+           high="0.0" presence="0.0" outputGain="9.0" cleanToneStackMode="0.0"
+           dirtyToneStackMode="0.0" dirtyDistortionMode="0.0" namFilePath=""/>
+    </Slot>
+    <Slot type="Cab" bypassed="0">
+      <Cab cabAAxis="0.0" cabAPan="0.0" cabAGain="1.490116119384766e-6"
+           cabADistance="20000.0" cabADelay="0.0" cabBAxis="0.0" cabBPan="0.0"
+           cabBGain="0.0" cabBDistance="20000.0" cabBDelay="0.0" cabMix="0.0"
+           cabAFilePath="BinaryData::AL-Subvera.wav" cabBFilePath="BinaryData::AL-Crypta.wav"/>
+    </Slot>
+    <Slot type="Reverb" bypassed="1">
+      <Reverb mix="0.5" preDelay="0.0" roomSize="0.5" decay="0.5" dampingFrequency="2500.0"
+              chorusDepth="0.300000011920929"/>
+    </Slot>
+    <Slot type="Delay" bypassed="0">
+      <Delay mode="0.0" mix="0.4099999964237213" delayTime="1.0" delayTimeSynced="8.0"
+             feedback="0.25" stereoWidth="0.0" modulation="0.300000011920929"
+             glitchMode="0.0" damping="2600.0" tempoSync="1"/>
+    </Slot>
+    <Slot type="Chorus" bypassed="1">
+      <Chorus mix="0.5" voices="2.0" rate="2.0" depth="0.5" feedback="0.2000000029802322"
+              delayTime="10.0" tone="2600.0"/>
+    </Slot>
+    <Slot type="Ringmod" bypassed="1">
+      <Ringmod mode="0.0" mix="0.5" frequency="1000.0" depth="0.5" lfoRate="1.5"
+               lfoRateSynced="5.0" lfoDepth="0.5" filterFrequency="2600.0" stereoMode="0"
+               tempoSync="0"/>
+    </Slot>
+  </DspChain>
+  <PreProcessor inputGain="0.0" stereoEnabled="0" gateEnabled="1" gateThreshold="-80.0"
+                gateAttack="25.0" gateRelease="40.0" gateAdvanced="0" transposeEnabled="0"
+                transposeSnap="0" transposeAmount="0.0" octaveEnabled="0" octaveAmount="0.0"
+                pickEnabled="0" pickStrength="0.0" eqEnabled="1" compEnabled="1"
+                compThreshold="0.0" compRatio="4.0" compAttack="2.0" compRelease="150.0"
+                clipperEnabled="1" clipperGain="0.0">
+    <ParametricEQ analyzerBypass="0" bypass="0"/>
+  </PreProcessor>
+  <PostProcessor chugEnabled="0" chugStrength="0.0" whistleEnabled="0" whistleAmount="1.0"
+                 lofiEnabled="1" lofiStrength="1.0" eqEnabled="1" limiterEnabled="1"
+                 compEnabled="0" compThreshold="0.0" compRatio="4.0" compAttack="2.0"
+                 compRelease="150.0" oversampling="2" outputGain="0.0">
+    <ParametricEQ analyzerBypass="0" bypass="0"/>
+  </PostProcessor>
+  <PARAMETERS>
+    <PARAM id="amp_input_gain" value="25.59999847412109"/>
+    <PARAM id="amp_output_gain" value="9.0"/>
+    <PARAM id="cab_a_gain" value="0.0"/>
+    <PARAM id="cab_b_gain" value="0.0"/>
+    <PARAM id="cab_mix" value="0.0"/>
+    <PARAM id="chorus_depth" value="0.5"/>
+    <PARAM id="chorus_feedback" value="0.199999988079071"/>
+    <PARAM id="chorus_mix" value="0.5"/>
+    <PARAM id="chorus_rate" value="2.0"/>
+    <PARAM id="chug_amount" value="1.0"/>
+    <PARAM id="chug_enable" value="0.0"/>
+    <PARAM id="delay_feedback" value="0.25"/>
+    <PARAM id="delay_mix" value="0.4099999964237213"/>
+    <PARAM id="delay_modulation" value="0.2999999821186066"/>
+    <PARAM id="delay_width" value="0.0"/>
+    <PARAM id="lofi_amount" value="1.0"/>
+    <PARAM id="lofi_enable" value="0.0"/>
+    <PARAM id="octave_amount" value="0.5"/>
+    <PARAM id="octave_enable" value="0.0"/>
+    <PARAM id="od_bits" value="8.0"/>
+    <PARAM id="od_circuit_bend" value="0.0"/>
+    <PARAM id="od_drive" value="0.1000000014901161"/>
+    <PARAM id="od_mix" value="1.0"/>
+    <PARAM id="od_output_gain" value="0.0"/>
+    <PARAM id="od_sr_reduction" value="16.0"/>
+    <PARAM id="od_trigger_bend" value="0.0"/>
+    <PARAM id="od_wavefold" value="1.0"/>
+    <PARAM id="pick_amount" value="1.0"/>
+    <PARAM id="pick_enable" value="0.0"/>
+    <PARAM id="reverb_chorus" value="0.2999999821186066"/>
+    <PARAM id="reverb_decay" value="0.5"/>
+    <PARAM id="reverb_mix" value="0.5"/>
+    <PARAM id="reverb_size" value="0.5"/>
+    <PARAM id="ringmod_depth" value="0.5"/>
+    <PARAM id="ringmod_freq" value="1000.0"/>
+    <PARAM id="ringmod_lfo_depth" value="0.5"/>
+    <PARAM id="ringmod_lfo_rate" value="1.50000011920929"/>
+    <PARAM id="ringmod_mix" value="0.5"/>
+    <PARAM id="whistle_amount" value="0.199999988079071"/>
+    <PARAM id="whistle_enable" value="1.0"/>
+    <PARAM id="gate_enable"/>
+    <PARAM id="gate_threshold"/>
+    <PARAM id="input_gain"/>
+    <PARAM id="output_gain"/>
+    <PARAM id="transpose_amount"/>
+    <PARAM id="transpose_enable"/>
+  </PARAMETERS>
+</AltarState>
