@@ -1,10 +1,24 @@
-param (
-    [string]$Config = "Release",
-    [string]$BuildDir = "build/output",
-    [string]$JuceRoot = "../JUCE"
-)
-
 $ErrorActionPreference = "Stop"
+
+$Config = "Release"
+$BuildDir = "build/output"
+$JuceRoot = "../JUCE"
+$enableUpdates = "ON"
+
+# Manual arg parsing -- same interface as linux.sh and macos.sh
+$i = 0
+while ($i -lt $args.Count) {
+    $arg = $args[$i]
+    switch -wildcard ($arg) {
+        "--noupdate"    { $enableUpdates = "OFF"; $i++; continue }
+        "-c"            { $Config = $args[++$i]; $i++; continue }
+        "-b"            { $BuildDir = $args[++$i]; $i++; continue }
+        "-j"            { $JuceRoot = $args[++$i]; $i++; continue }
+        "-h"            { Write-Host "Usage: $PSCommandPath [--noupdate] [-c Debug|Release|MinSizeRel|RelWithDebInfo] [-b build-dir] [-j juce-root]"; exit 0 }
+        default         { throw "Unknown option: $arg" }
+    }
+    $i++
+}
 
 if (-not ($IsWindows -or $env:OS -eq "Windows_NT")) {
     throw "build/windows.ps1 only supports Windows. Use build/macos.sh or build/linux.sh for other platforms."
@@ -65,7 +79,8 @@ $cmakeArgs = @(
     "-S", $repoRoot,
     "-B", $resolvedBuildDir,
     "-A", "x64",
-    "-DJUCE_ROOT=$resolvedJuceRoot"
+    "-DJUCE_ROOT=$resolvedJuceRoot",
+    "-DALTAR_ENABLE_UPDATES=$enableUpdates"
 )
 
 Write-Host "--- Configuring CMake ---" -ForegroundColor Cyan
@@ -90,6 +105,10 @@ if ($Config -ieq "Debug") {
     $outputConfig = "release"
 } else {
     $outputConfig = $Config.ToLowerInvariant()
+}
+
+if ($enableUpdates -eq "OFF") {
+    $outputConfig = "$outputConfig-noupdate"
 }
 
 $artifactRoot = Join-Path $resolvedBuildDir "Altar_artefacts/$Config"

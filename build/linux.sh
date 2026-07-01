@@ -5,6 +5,7 @@ set -euo pipefail
 CONFIG="Release"
 BUILD_DIR="build/output"
 JUCE_ROOT="../JUCE"
+ENABLE_UPDATES="ON"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
 
@@ -35,7 +36,7 @@ else
 fi
 
 usage() {
-    echo "Usage: $0 [-c Debug|Release|MinSizeRel|RelWithDebInfo] [-b build-dir] [-j juce-root]"
+    echo "Usage: $0 [--noupdate] [-c Debug|Release|MinSizeRel|RelWithDebInfo] [-b build-dir] [-j juce-root]"
 }
 
 normalize_config() {
@@ -52,22 +53,28 @@ normalize_config() {
     esac
 }
 
-while getopts ":c:b:j:h" opt; do
-    case "$opt" in
-        c) CONFIG="$(normalize_config "$OPTARG")" ;;
-        b) BUILD_DIR="$OPTARG" ;;
-        j) JUCE_ROOT="$OPTARG" ;;
-        h)
+while (($# > 0)); do
+    case "$1" in
+        --noupdate) ENABLE_UPDATES="OFF"; shift ;;
+        -c|-b|-j)
+            if (($# < 2)); then
+                echo "Option $1 requires an argument." >&2
+                usage >&2
+                exit 1
+            fi
+            option="$1"
+            value="$2"
+            if [[ "$option" == "-c" ]]; then CONFIG="$(normalize_config "$value")"; fi
+            if [[ "$option" == "-b" ]]; then BUILD_DIR="$value"; fi
+            if [[ "$option" == "-j" ]]; then JUCE_ROOT="$value"; fi
+            shift 2
+            ;;
+        -h|--help)
             usage
             exit 0
             ;;
-        :)
-            echo "Option -$OPTARG requires an argument." >&2
-            usage >&2
-            exit 1
-            ;;
-        \?)
-            echo "Unknown option: -$OPTARG" >&2
+        *)
+            echo "Unknown option: $1" >&2
             usage >&2
             exit 1
             ;;
@@ -138,6 +145,7 @@ CMAKE_ARGS=(
     -DCMAKE_C_COMPILER=gcc
     -DCMAKE_CXX_COMPILER=g++
     -DJUCE_ROOT="$RESOLVED_JUCE_ROOT"
+    -DALTAR_ENABLE_UPDATES="$ENABLE_UPDATES"
 )
 
 echo "--- Configuring CMake with GCC ---"
@@ -151,6 +159,7 @@ case "$CONFIG" in
     Release) OUTPUT_CONFIG="release" ;;
     *) OUTPUT_CONFIG="${CONFIG,,}" ;;
 esac
+if [[ "$ENABLE_UPDATES" == "OFF" ]]; then OUTPUT_CONFIG="$OUTPUT_CONFIG-noupdate"; fi
 
 ARTIFACT_ROOT="$RESOLVED_BUILD_DIR/Altar_artefacts/$CONFIG"
 OUTPUT_DIRECTORY="$REPO_ROOT/binaries/$OUTPUT_CONFIG"

@@ -224,7 +224,7 @@ private:
                 else if (text == "Audio output device:" || (text == "Output:" && getAudioRole(*label).isEmpty()))
                 {
                     label->getProperties().set("altarAudioRole", "outputDevice");
-                    label->setText("Type:", juce::dontSendNotification);
+                    label->setText("Output:", juce::dontSendNotification);
                 }
                 else if (text == "Audio input device:" || (text == "Input:" && getAudioRole(*label).isEmpty()))
                 {

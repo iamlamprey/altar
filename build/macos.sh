@@ -7,14 +7,16 @@ BUILD_DIR="build/output"
 JUCE_ROOT="../JUCE"
 OSX_ARCHITECTURES="arm64;x86_64"
 OSX_DEPLOYMENT_TARGET="11.0"
+ENABLE_UPDATES="ON"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
 PRODUCT_NAME="Altar"
 PACKAGE_ID_BASE="com.iamlamprey.Altar"
+STANDALONE_ENTITLEMENTS="$REPO_ROOT/Source/macos.entitlements"
 
 usage() {
     cat <<USAGE
-Usage: $0 [-c Debug|Release|MinSizeRel|RelWithDebInfo] [-b build-dir] [-j juce-root]
+Usage: $0 [--noupdate] [-c Debug|Release|MinSizeRel|RelWithDebInfo] [-b build-dir] [-j juce-root]
 
 Pipeline:
   1. Build app, VST3, and AU artifacts.
@@ -131,8 +133,14 @@ sign_artifact() {
     local artifact="$1"
 
     require_artifact "$artifact" "Codesign"
-    codesign --force --deep --options runtime --timestamp --sign "$MACOS_CODESIGN_IDENTITY" "$artifact" \
-        || fail_step "Codesign" "codesign failed for $artifact. Check MACOS_CODESIGN_IDENTITY and the Developer ID G2 certificate chain."
+    if [[ "$artifact" == *.app ]]; then
+        require_artifact "$STANDALONE_ENTITLEMENTS" "Codesign"
+        codesign --force --deep --options runtime --timestamp --entitlements "$STANDALONE_ENTITLEMENTS" --sign "$MACOS_CODESIGN_IDENTITY" "$artifact" \
+            || fail_step "Codesign" "codesign failed for $artifact. Check MACOS_CODESIGN_IDENTITY and the Developer ID G2 certificate chain."
+    else
+        codesign --force --deep --options runtime --timestamp --sign "$MACOS_CODESIGN_IDENTITY" "$artifact" \
+            || fail_step "Codesign" "codesign failed for $artifact. Check MACOS_CODESIGN_IDENTITY and the Developer ID G2 certificate chain."
+    fi
     codesign --verify --deep --strict --verbose=2 "$artifact" \
         || fail_step "Codesign" "codesign verification failed for $artifact."
     echo "Developer ID signed: $artifact"
@@ -157,22 +165,28 @@ assert_pkg_payload_contains() {
         || fail_step "Package" "pkg payload does not contain $description. Expected to find $expected_path in pkgutil --payload-files output."
 }
 
-while getopts ":c:b:j:h" opt; do
-    case "$opt" in
-        c) CONFIG="$(normalize_config "$OPTARG")" ;;
-        b) BUILD_DIR="$OPTARG" ;;
-        j) JUCE_ROOT="$OPTARG" ;;
-        h)
+while (($# > 0)); do
+    case "$1" in
+        --noupdate) ENABLE_UPDATES="OFF"; shift ;;
+        -c|-b|-j)
+            if (($# < 2)); then
+                echo "Option $1 requires an argument." >&2
+                usage >&2
+                exit 1
+            fi
+            option="$1"
+            value="$2"
+            if [[ "$option" == "-c" ]]; then CONFIG="$(normalize_config "$value")"; fi
+            if [[ "$option" == "-b" ]]; then BUILD_DIR="$value"; fi
+            if [[ "$option" == "-j" ]]; then JUCE_ROOT="$value"; fi
+            shift 2
+            ;;
+        -h|--help)
             usage
             exit 0
             ;;
-        :)
-            echo "Option -$OPTARG requires an argument." >&2
-            usage >&2
-            exit 1
-            ;;
-        \?)
-            echo "Unknown option: -$OPTARG" >&2
+        *)
+            echo "Unknown option: $1" >&2
             usage >&2
             exit 1
             ;;
@@ -180,6 +194,7 @@ while getopts ":c:b:j:h" opt; do
 done
 
 OUTPUT_CONFIG="$(output_config_name "$CONFIG")"
+if [[ "$ENABLE_UPDATES" == "OFF" ]]; then OUTPUT_CONFIG="$OUTPUT_CONFIG-noupdate"; fi
 RESOLVED_BUILD_DIR="$(resolve_repo_path "$BUILD_DIR")"
 RESOLVED_JUCE_ROOT="$(resolve_repo_path "$JUCE_ROOT")"
 ARTIFACT_ROOT="$RESOLVED_BUILD_DIR/Altar_artefacts/$CONFIG"
@@ -205,6 +220,7 @@ CMAKE_ARGS=(
     -DCMAKE_OSX_ARCHITECTURES="$OSX_ARCHITECTURES"
     -DCMAKE_OSX_DEPLOYMENT_TARGET="$OSX_DEPLOYMENT_TARGET"
     -DJUCE_ROOT="$RESOLVED_JUCE_ROOT"
+    -DALTAR_ENABLE_UPDATES="$ENABLE_UPDATES"
 )
 
 cmake "${CMAKE_ARGS[@]}" || fail_step "Build" "CMake configure failed."
@@ -241,7 +257,9 @@ copy_to_payload "$OUTPUT_DIR/$PRODUCT_NAME.app" "$PAYLOAD_ROOT/Applications/$PRO
 copy_to_payload "$OUTPUT_DIR/$PRODUCT_NAME.vst3" "$PAYLOAD_ROOT/Library/Audio/Plug-Ins/VST3/$PRODUCT_NAME.vst3"
 copy_to_payload "$OUTPUT_DIR/$PRODUCT_NAME.component" "$PAYLOAD_ROOT/Library/Audio/Plug-Ins/Components/$PRODUCT_NAME.component"
 
-FINAL_PKG="$DIST_DIR/$PRODUCT_NAME-$VERSION-macOS.pkg"
+PACKAGE_VARIANT=""
+if [[ "$ENABLE_UPDATES" == "OFF" ]]; then PACKAGE_VARIANT="-noupdate"; fi
+FINAL_PKG="$DIST_DIR/$PRODUCT_NAME-$VERSION-macOS$PACKAGE_VARIANT.pkg"
 
 cat > "$COMPONENT_PLIST" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>

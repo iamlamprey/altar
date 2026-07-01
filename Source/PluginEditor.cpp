@@ -151,7 +151,9 @@ AltarEditor::AltarEditor(AltarProcessor& p) : AudioProcessorEditor(&p), processo
 
     addAndMakeVisible(tooltip);
     addAndMakeVisible(cpuMeter);
+#if ALTAR_ENABLE_UPDATES
     addChildComponent(updateHandler);
+#endif
     addAndMakeVisible(witnessBtn);
 
     btnCloseOverlay.setButtonText("x");
@@ -163,7 +165,9 @@ AltarEditor::AltarEditor(AltarProcessor& p) : AudioProcessorEditor(&p), processo
 
     setWantsKeyboardFocus(true);
     setSize(1150, 670);
+#if ALTAR_ENABLE_UPDATES
     updateHandler.startCheckOnce();
+#endif
 }
 
 AltarEditor::~AltarEditor()
@@ -226,7 +230,9 @@ void AltarEditor::resized()
     outputVuMeter.setBounds(1001, 231, 120, 413);
 
     cpuMeter.setBounds(getWidth() - 290, 646, 280, 20);
+#if ALTAR_ENABLE_UPDATES
     updateHandler.setBounds(29, 647, 120, 22);
+#endif
 
     tooltip.setBounds(410, 641, 330, 30);
     tooltip.toFront(false);

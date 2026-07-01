@@ -27,7 +27,9 @@
 #include "UI/Components/CPUMeter.h"
 #include "UI/Components/WitnessButton.h"
 #include "UI/Components/CabDesignerPanel.h"
+#if ALTAR_ENABLE_UPDATES
 #include "UI/Core/UpdateHandler.h"
+#endif
 #include "DSP/Modules/Cab.h"
 
 namespace Altar
@@ -100,7 +102,9 @@ private:
     UI::VUMeter outputVuMeter { processor, UI::VUMeter::Type::Output };
 
     UI::CPUMeter cpuMeter { processor };
+#if ALTAR_ENABLE_UPDATES
     Core::UpdateHandler updateHandler;
+#endif
     UI::WitnessButton witnessBtn;
     UI::CustomTooltip tooltip;
 

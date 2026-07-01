@@ -4,7 +4,9 @@ if(APPLE)
     set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "Minimum macOS deployment version" FORCE)
 endif()
 
-project(Altar VERSION 0.4.0 LANGUAGES C CXX)
+project(Altar VERSION 0.4.1 LANGUAGES C CXX)
+
+option(ALTAR_ENABLE_UPDATES "Include Altar's internal update checker" ON)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -41,6 +43,8 @@ juce_add_plugin(Altar
     NEEDS_MIDI_OUTPUT FALSE
     IS_MIDI_EFFECT FALSE
     EDITOR_WANTS_KEYBOARD_FOCUS FALSE
+    MICROPHONE_PERMISSION_ENABLED TRUE
+    MICROPHONE_PERMISSION_TEXT "Altar needs microphone access to process audio from your selected input device."
     COPY_PLUGIN_AFTER_BUILD FALSE)
 
 juce_generate_juce_header(Altar)
@@ -83,6 +87,7 @@ target_compile_definitions(Altar
         JUCE_STRICT_REFCOUNTEDPOINTER=1
         JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
+        ALTAR_ENABLE_UPDATES=$<BOOL:${ALTAR_ENABLE_UPDATES}>
         _SILENCE_CXX20_OLD_SHARED_PTR_ATOMIC_SUPPORT_DEPRECATION_WARNING=1
         _USE_MATH_DEFINES=1)
 
