@@ -429,7 +429,6 @@ private:
     private:
         Reverb& module;
         juce::TextButton btnRandomize;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sldReverbMixAtt, sldReverbRoomSizeAtt, sldReverbDecayAtt, sldReverbChorusDepthAtt;
         juce::Label lblReverbBeware;
         juce::Slider sldReverbMix;
         juce::Slider sldReverbPreDelay;
@@ -437,6 +436,7 @@ private:
         juce::Slider sldReverbDecay;
         juce::Slider sldReverbChorusDepth;
         juce::Slider sldReverbDampingFrequency;
+        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sldReverbMixAtt, sldReverbRoomSizeAtt, sldReverbDecayAtt, sldReverbChorusDepthAtt;
     };
 };
 

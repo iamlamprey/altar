@@ -397,7 +397,6 @@ private:
     private:
         Chorus& module;
         juce::TextButton btnRandomize;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sldChorusMixAtt, sldChorusRateAtt, sldChorusDepthAtt, sldChorusFeedbackAtt;
 
 
         juce::Slider sldChorusMix;
@@ -407,6 +406,7 @@ private:
         juce::Slider sldChorusFeedback;
         juce::Slider sldChorusDelayTime;
         juce::Slider sldChorusDamping;
+        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sldChorusMixAtt, sldChorusRateAtt, sldChorusDepthAtt, sldChorusFeedbackAtt;
     };
 };
 
